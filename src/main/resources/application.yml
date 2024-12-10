@@ -1,0 +1,41 @@
+server:
+  port: 8080
+
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes: # Spring Cloud Gateway 라우팅 설정
+        - id: member-api
+          uri: lb://member-api
+          predicates:
+            - Path=/members/**, /api/members
+        - id: auth-api
+          uri: lb://auth-api
+          predicates:
+            - Path=/auth/**
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://admin:1234@localhost:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+
+
+jwt:
+  secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
+  refresh-expiration-time: 259200000 # 3days
+  access-expiration-time: 3600000 # 1hour
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
