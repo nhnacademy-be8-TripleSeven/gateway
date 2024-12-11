@@ -19,7 +19,6 @@ spring:
             - Path=/auth/**
 
 
-
 eureka:
   client:
     service-url:
