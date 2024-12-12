@@ -63,7 +63,7 @@ jobs:
               docker stop gateway-server-instance-1 || true
               docker rm -f gateway-server-instance-1 || true
             fi
-              docker run --name gateway-server-instance-1 --network nhn-book-store-network -p 8090:8090 -d lushlife99/nhn-gateway:${{ github.sha }}
+              docker run --name gateway-server-instance-1 --network nhn-book-store-network -p 8090:8090 -e SPRING_PROFILES_ACTIVE=instance1 -d lushlife99/nhn-gateway:${{ github.sha }}
               
 
 
@@ -79,4 +79,4 @@ jobs:
               docker stop gateway-server-instance-2 || true
               docker rm -f gateway-server-instance-2 || true
             fi
-              docker run --name gateway-server-instance-2 --network nhn-book-store-network -p 8091:8091 -d lushlife99/nhn-gateway:${{ github.sha }}
+              docker run --name gateway-server-instance-2 --network nhn-book-store-network -p 8091:8091 -e SPRING_PROFILES_ACTIVE=instance2 -d lushlife99/nhn-gateway:${{ github.sha }}
