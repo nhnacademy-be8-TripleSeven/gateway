@@ -63,7 +63,8 @@ jobs:
               docker stop gateway-server-instance-1 || true
               docker rm -f gateway-server-instance-1 || true
             fi
-              docker run -d --name gateway-server-instance-1 -p 8090:8090 lushlife99/nhn-gateway:${{ github.sha }}
+              docker run --name gateway-server-instance-1 --network nhn-book-store-network -p 8090:8090 -d lushlife99/nhn-gateway:${{ github.sha }}
+              
 
 
       - name: Deploy to Second Instance
@@ -74,9 +75,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            docker pull lushlife99/nhn-gateway:${{ github.sha }}
             if [ "$(docker ps -aq --filter "name=gateway-server-instance-2")" ]; then
               docker stop gateway-server-instance-2 || true
               docker rm -f gateway-server-instance-2 || true
             fi
-              docker run -d --name gateway-server-instance-2 -p 8091:8091 lushlife99/nhn-gateway:${{ github.sha }}
+              docker run --name gateway-server-instance-2 --network nhn-book-store-network -p 8091:8091 -d lushlife99/nhn-gateway:${{ github.sha }}

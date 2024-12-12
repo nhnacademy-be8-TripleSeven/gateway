@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8090
 
 spring:
   main:
@@ -17,12 +17,19 @@ spring:
           uri: lb://auth-api
           predicates:
             - Path=/auth/**
+      discovery:
+        locator:
+          enabled: true
+    loadbalancer:
+      retry:
+        backoff:
+          enabled: true
 
 
 eureka:
   client:
     service-url:
-      defaultZone: http://admin:1234@localhost:8761/eureka
+      defaultZone: http://admin:1234@eureka-server:8761/eureka/
     register-with-eureka: true
     fetch-registry: true
   instance:
