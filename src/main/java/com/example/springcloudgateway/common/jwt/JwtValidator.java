@@ -4,13 +4,8 @@ import com.example.springcloudgateway.common.error.jwt.TokenValidationException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SecurityException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,7 +19,6 @@ import org.springframework.util.StringUtils;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.stream.Collectors;
 
 @Slf4j
