@@ -1,8 +1,10 @@
 package com.example.springcloudgateway.common.jwt;
 
+import com.example.springcloudgateway.common.error.jwt.TokenValidationException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -31,7 +34,6 @@ public class JwtValidator {
 
     private static final String AUTHORITIES_KEY = "auth";
     private static final String JWT_KEY_PREFIX = "jwt:";
-    private final RedisTemplate<String, Object> redisTemplate;
     private final Key key;
     private final int accessExpirationTime;
 
@@ -39,11 +41,9 @@ public class JwtValidator {
 
     public JwtValidator(@Value("${jwt.secret}") String secretKey,
                         @Value("${jwt.access-expiration-time}") int accessExpirationTime,
-                        @Value("${jwt.refresh-expiration-time}") int refreshExpirationTime,
-                        RedisTemplate<String, Object> redisTemplate) {
+                        @Value("${jwt.refresh-expiration-time}") int refreshExpirationTime) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
-        this.redisTemplate = redisTemplate;
         this.accessExpirationTime = accessExpirationTime;
         this.refreshExpirationTime = refreshExpirationTime;
     }
@@ -64,7 +64,7 @@ public class JwtValidator {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
         // UserDetails 객체를 만들어서 Authentication 리턴
-        UserDetails principal = new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities);
+        UserDetails principal = new User(claims.getSubject(), "", authorities);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
@@ -83,11 +83,14 @@ public class JwtValidator {
             Claims body = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            throw new TokenValidationException("INVALID_TOKEN_SIGNATURE");
         } catch (ExpiredJwtException e) {
+            throw new TokenValidationException("TOKEN_EXPIRED");
         } catch (UnsupportedJwtException e) {
+            throw new TokenValidationException("UNSUPPORTED_TOKEN");
         } catch (IllegalArgumentException e) {
+            throw new TokenValidationException("INVALID_TOKEN");
         }
-        return false;
     }
 
     private Claims parseClaims(String token) {
@@ -95,7 +98,7 @@ public class JwtValidator {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException e) {
             log.info(e.getMessage());
-            return e.getClaims();
+            throw new TokenValidationException("TOKEN_EXPIRED");
         }
     }
 }

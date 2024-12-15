@@ -10,6 +10,7 @@ import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
@@ -31,7 +32,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-        return http.cors(corsCustomizer -> corsCustomizer.configurationSource(corsConfigurationSource()))
+        return http
                 .csrf(csrfSpec -> csrfSpec.disable())
                 .formLogin(formLogin -> formLogin.disable())
                 .cors(cors -> cors.disable())
@@ -44,32 +45,28 @@ public class SecurityConfig {
                     authorizeExchangeSpec.pathMatchers("/auth/**").permitAll();
                     authorizeExchangeSpec.pathMatchers("/api/**").authenticated();
                 })
-                .addFilterBefore(authenticationWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
+                .addFilterAt(authenticationWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
     }
 
     private AuthenticationWebFilter authenticationWebFilter() {
-        ReactiveAuthenticationManager authenticationManager = Mono::just;
-
-        AuthenticationWebFilter authenticationWebFilter
-                = new AuthenticationWebFilter(authenticationManager);
+        ReactiveAuthenticationManager authenticationManager = reactiveAuthenticationManager();
+        AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(authenticationManager);
         authenticationWebFilter.setServerAuthenticationConverter(jwtConverter);
+        authenticationWebFilter.setAuthenticationFailureHandler((webFilterExchange, exception) -> {
+            return customServerAuthenticationEntryPoint.commence(webFilterExchange.getExchange(), exception);
+        });
         return authenticationWebFilter;
     }
 
-
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000")); // front server url로 변경
-        configuration.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT","PATCH"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+    public ReactiveAuthenticationManager reactiveAuthenticationManager() {
+        return authentication -> {
+            if (authentication.isAuthenticated()) {
+                return Mono.just(authentication);
+            }
+            return Mono.error(new AuthenticationException("Invalid authentication") {});
+        };
     }
 
 }
