@@ -10,6 +10,7 @@ import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
@@ -44,17 +45,28 @@ public class SecurityConfig {
                     authorizeExchangeSpec.pathMatchers("/auth/**").permitAll();
                     authorizeExchangeSpec.pathMatchers("/api/**").authenticated();
                 })
-                .addFilterBefore(authenticationWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
+                .addFilterAt(authenticationWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
     }
 
     private AuthenticationWebFilter authenticationWebFilter() {
-        ReactiveAuthenticationManager authenticationManager = Mono::just;
-
-        AuthenticationWebFilter authenticationWebFilter
-                = new AuthenticationWebFilter(authenticationManager);
+        ReactiveAuthenticationManager authenticationManager = reactiveAuthenticationManager();
+        AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(authenticationManager);
         authenticationWebFilter.setServerAuthenticationConverter(jwtConverter);
+        authenticationWebFilter.setAuthenticationFailureHandler((webFilterExchange, exception) -> {
+            return customServerAuthenticationEntryPoint.commence(webFilterExchange.getExchange(), exception);
+        });
         return authenticationWebFilter;
+    }
+
+    @Bean
+    public ReactiveAuthenticationManager reactiveAuthenticationManager() {
+        return authentication -> {
+            if (authentication.isAuthenticated()) {
+                return Mono.just(authentication);
+            }
+            return Mono.error(new AuthenticationException("Invalid authentication") {});
+        };
     }
 
 }

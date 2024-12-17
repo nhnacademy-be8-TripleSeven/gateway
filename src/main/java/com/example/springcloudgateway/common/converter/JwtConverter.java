@@ -1,9 +1,10 @@
 package com.example.springcloudgateway.common.converter;
 
+import com.example.springcloudgateway.common.error.jwt.TokenValidationException;
 import com.example.springcloudgateway.common.jwt.JwtValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -28,8 +29,9 @@ public class JwtConverter implements ServerAuthenticationConverter {
             if(!Objects.isNull(token) && jwtValidator.validateToken(token)){
                 return Mono.justOrEmpty(jwtValidator.getAuthentication(token));
             }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
+        } catch (TokenValidationException e) {
+            log.error("error : {}", e.getMessage());
+            return Mono.error(e);
         }
 
         return Mono.empty();
