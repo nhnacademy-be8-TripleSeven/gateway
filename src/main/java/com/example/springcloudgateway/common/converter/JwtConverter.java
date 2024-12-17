@@ -3,6 +3,7 @@ package com.example.springcloudgateway.common.converter;
 import com.example.springcloudgateway.common.jwt.JwtValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -30,6 +31,7 @@ public class JwtConverter implements ServerAuthenticationConverter {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
+
         return Mono.empty();
     }
 }

@@ -31,7 +31,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-        return http.cors(corsCustomizer -> corsCustomizer.configurationSource(corsConfigurationSource()))
+        return http
                 .csrf(csrfSpec -> csrfSpec.disable())
                 .formLogin(formLogin -> formLogin.disable())
                 .cors(cors -> cors.disable())
@@ -55,21 +55,6 @@ public class SecurityConfig {
                 = new AuthenticationWebFilter(authenticationManager);
         authenticationWebFilter.setServerAuthenticationConverter(jwtConverter);
         return authenticationWebFilter;
-    }
-
-
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000")); // front server url로 변경
-        configuration.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT","PATCH"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
     }
 
 }

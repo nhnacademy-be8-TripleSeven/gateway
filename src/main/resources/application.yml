@@ -5,15 +5,19 @@ spring:
     name: gateway
   cloud:
     gateway:
-      routes: # Spring Cloud Gateway 라우팅 설정
+      routes:
         - id: member-api
           uri: lb://member-api
           predicates:
-            - Path=/members/**, /api/members
+            - Path=/members/**, /api/members/**
         - id: auth-api
           uri: lb://auth-api
           predicates:
             - Path=/auth/**
+      default-filters:
+        - name: JwtAuthenticationFilter
+          args:
+            headerName: X-USER
       discovery:
         locator:
           enabled: true
