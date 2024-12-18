@@ -1,0 +1,7 @@
+server:
+  port: 8090
+
+eureka:
+  instance:
+    instance-id: gateway-1
+    hostname: localhost
