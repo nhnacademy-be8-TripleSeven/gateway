@@ -16,6 +16,10 @@ spring:
           uri: lb://auth-api
           predicates:
             - Path=/auth/**
+        - id: book-coupon-api
+          uri: lb://book-coupon-api
+          predicates:
+            - Path=/books/**
       default-filters:
         - name: JwtAuthenticationFilter
           args:
