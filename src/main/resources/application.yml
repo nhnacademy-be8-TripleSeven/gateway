@@ -19,7 +19,9 @@ spring:
         - id: book-coupon-api
           uri: lb://book-coupon-api
           predicates:
-            - Path=/books/**
+            - Path=/api/books/**
+          filters:
+            - RewritePath=/api/(?<path>.*), /${path}
       default-filters:
         - name: JwtAuthenticationFilter
           args:
