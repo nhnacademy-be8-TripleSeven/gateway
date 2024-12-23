@@ -28,8 +28,6 @@ spring:
         backoff:
           enabled: true
 
-
-
 jwt:
   secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
   refresh-expiration-time: 259200000 # 3days
