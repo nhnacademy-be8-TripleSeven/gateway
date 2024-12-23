@@ -35,7 +35,7 @@ public class SecurityConfig {
         return http
                 .csrf(csrfSpec -> csrfSpec.disable())
                 .formLogin(formLogin -> formLogin.disable())
-                .cors(cors -> cors.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .logout(logout -> logout.disable())
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance()) // session STATELESS
@@ -68,5 +68,20 @@ public class SecurityConfig {
             return Mono.error(new AuthenticationException("Invalid authentication") {});
         };
     }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedOrigin("https://nhn24.store"); // 허용할 Origin
+        config.addAllowedMethod("*"); // 모든 HTTP 메서드 허용
+        config.addAllowedHeader("*"); // 모든 헤더 허용
+        config.setAllowCredentials(true); // 인증 정보 허용
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
+    }
+
 
 }
