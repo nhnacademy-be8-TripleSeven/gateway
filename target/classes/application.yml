@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev
+    active: prod
   main:
     web-application-type: reactive
   application:
@@ -16,6 +16,15 @@ spring:
           uri: lb://auth-api
           predicates:
             - Path=/auth/**
+        - id: order-api
+          uri: lb://order-api
+          predicates:
+            - Path=/orders/**, /api/orders/**
+        - id: book-coupon-api
+          uri: lb://book-coupon-api
+          predicates:
+            - Path=/books/**, /api/books/**
+
       default-filters:
         - name: JwtAuthenticationFilter
           args:
