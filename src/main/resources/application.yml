@@ -22,6 +22,7 @@ spring:
             - Path=/orders/**, /api/orders/**
         - id: book-coupon-api
           uri: lb://book-coupon-api
+          predicates:
             - Path=/books/**, /api/books/**
 
       default-filters:
