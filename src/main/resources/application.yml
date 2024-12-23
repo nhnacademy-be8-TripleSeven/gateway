@@ -16,15 +16,12 @@ spring:
           uri: lb://auth-api
           predicates:
             - Path=/auth/**
-        - id: order-api
-          uri: lb://order-api
-          predicates:
-            - Path=/orders/**, /api/orders/**
         - id: book-coupon-api
           uri: lb://book-coupon-api
           predicates:
-            - Path=/books/**, /api/books/**
-
+            - Path=/api/books/**
+          filters:
+            - RewritePath=/api/(?<path>.*), /${path}
       default-filters:
         - name: JwtAuthenticationFilter
           args:
@@ -40,11 +37,12 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://admin:1234@localhost:8761/eureka/
+      defaultZone: http://admin:1234@eureka-server:8761/eureka/
     register-with-eureka: true
     fetch-registry: true
   instance:
     prefer-ip-address: true
+
 
 jwt:
   secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
