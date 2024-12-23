@@ -37,6 +37,15 @@ spring:
         backoff:
           enabled: true
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://admin:1234@localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+
 jwt:
   secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
   refresh-expiration-time: 259200000 # 3days
