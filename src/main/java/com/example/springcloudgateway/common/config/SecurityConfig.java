@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .authorizeExchange(authorizeExchangeSpec -> {
                     authorizeExchangeSpec.pathMatchers("/members/**").permitAll();
                     authorizeExchangeSpec.pathMatchers("/auth/**").permitAll();
-                    authorizeExchangeSpec.pathMatchers("/api/**").authenticated();
+                    authorizeExchangeSpec.pathMatchers("/api/**").permitAll();
                 })
                 .addFilterAt(authenticationWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
