@@ -44,6 +44,7 @@ public class SecurityConfig {
                     authorizeExchangeSpec.pathMatchers("/members/**").permitAll();
                     authorizeExchangeSpec.pathMatchers("/auth/**").permitAll();
                     authorizeExchangeSpec.pathMatchers("/api/**").authenticated();
+                    authorizeExchangeSpec.pathMatchers("/admin/**").hasRole("ADMIN");
                 })
                 .addFilterAt(authenticationWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
