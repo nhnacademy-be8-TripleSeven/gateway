@@ -8,6 +8,10 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: front-api
+          uri: lb://front-api
+          predicates:
+            - Path=/frontend/**, /api/frontend/**, /admin/frontend/**
         - id: member-api
           uri: lb://member-api
           predicates:
@@ -22,6 +26,11 @@ spring:
             - Path=/api/books/**
           filters:
             - RewritePath=/api/(?<path>.*), /${path}
+        - id: order-api
+          uri: lb://order-api
+          predicates:
+            - Path=/orders/**,  /api/orders/**
+
       default-filters:
         - name: JwtAuthenticationFilter
           args:
