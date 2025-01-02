@@ -22,7 +22,6 @@ import java.time.LocalDateTime;
 public class CustomServerAuthenticationEntryPoint implements ServerAuthenticationEntryPoint {
     @Override
     public Mono<Void> commence(ServerWebExchange exchange, AuthenticationException ex) {
-
         String requestPath = exchange.getRequest().getPath().value();
         log.error("Unauthorized error: {}", ex.getMessage());
         log.error("Requested path    : {}", requestPath);
