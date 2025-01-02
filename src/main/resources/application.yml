@@ -15,7 +15,7 @@ spring:
         - id: member-api
           uri: lb://member-api
           predicates:
-            - Path=/members/**, /api/members/**
+            - Path=/members/**, /api/members/**, /admin/members/**
         - id: auth-api
           uri: lb://auth-api
           predicates:
@@ -23,13 +23,11 @@ spring:
         - id: book-coupon-api
           uri: lb://book-coupon-api
           predicates:
-            - Path=/api/books/**
-          filters:
-            - RewritePath=/api/(?<path>.*), /${path}
+            - Path=/books/**, /api/books/**, /admin/books/**
         - id: order-api
           uri: lb://order-api
           predicates:
-            - Path=/orders/**,  /api/orders/**
+            - Path=/orders/**,  /api/orders/**, /admin/orders/**
 
       default-filters:
         - name: JwtAuthenticationFilter
