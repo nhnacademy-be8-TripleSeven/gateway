@@ -6,6 +6,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -68,9 +69,9 @@ public class JwtValidator {
 
     // Request Cookie 에서 토큰 정보 추출
     public String resolveToken(ServerHttpRequest request) {
-        String bearerToken = request.getHeaders().getFirst("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
-            return bearerToken.substring(7);
+        HttpCookie jwtToken = request.getCookies().getFirst("jwt_token");
+        if (jwtToken != null && StringUtils.hasText(jwtToken.getValue())) {
+            return jwtToken.getValue();
         }
         return null;
     }

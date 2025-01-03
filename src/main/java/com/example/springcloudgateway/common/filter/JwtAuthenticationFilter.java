@@ -1,7 +1,6 @@
 package com.example.springcloudgateway.common.filter;
 
 import com.example.springcloudgateway.common.jwt.JwtValidator;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
