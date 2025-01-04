@@ -26,8 +26,6 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
         return (exchange, chain) -> {
             String token = jwtValidator.resolveToken(exchange.getRequest());
 
-            System.out.println("exchange.getRequest().getURI() = " + exchange.getRequest().getURI());
-
             if (token != null && jwtValidator.validateToken(token)) {
                 Authentication authentication = jwtValidator.getAuthentication(token);
                 exchange = exchange.mutate()
