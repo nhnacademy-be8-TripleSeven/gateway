@@ -42,9 +42,10 @@ public class SecurityConfig {
                 .exceptionHandling(exhandler -> exhandler.authenticationEntryPoint(customServerAuthenticationEntryPoint))
                 .authorizeExchange(authorizeExchangeSpec -> {
                     authorizeExchangeSpec.pathMatchers("/members/**").permitAll();
+                    authorizeExchangeSpec.pathMatchers("/cart/**").permitAll();
                     authorizeExchangeSpec.pathMatchers("/auth/**").permitAll();
                     authorizeExchangeSpec.pathMatchers("/frontend/**").permitAll();
-                    authorizeExchangeSpec.pathMatchers("/api/**").authenticated();
+                    authorizeExchangeSpec.pathMatchers("/api/**").hasRole("USER");
                     authorizeExchangeSpec.pathMatchers("/admin/**").hasRole("ADMIN");
                 })
                 .addFilterAt(authenticationWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
