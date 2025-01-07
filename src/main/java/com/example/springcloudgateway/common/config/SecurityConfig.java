@@ -45,8 +45,8 @@ public class SecurityConfig {
                     authorizeExchangeSpec.pathMatchers("/cart/**").permitAll();
                     authorizeExchangeSpec.pathMatchers("/auth/**").permitAll();
                     authorizeExchangeSpec.pathMatchers("/frontend/**").permitAll();
-                    authorizeExchangeSpec.pathMatchers("/api/**").hasRole("USER");
-                    authorizeExchangeSpec.pathMatchers("/admin/**").hasRole("ADMIN");
+                    authorizeExchangeSpec.pathMatchers("/api/**").hasAnyRole("USER", "ADMIN_USER");
+                    authorizeExchangeSpec.pathMatchers("/admin/**").hasRole("ADMIN_USER");
                 })
                 .addFilterAt(authenticationWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
