@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .authorizeExchange(authorizeExchangeSpec -> {
                     authorizeExchangeSpec.pathMatchers("/members/**").permitAll();
                     authorizeExchangeSpec.pathMatchers("/cart/**").permitAll();
+                    authorizeExchangeSpec.pathMatchers("/orders/**").permitAll();
                     authorizeExchangeSpec.pathMatchers("/auth/**").permitAll();
                     authorizeExchangeSpec.pathMatchers("/frontend/**").permitAll();
                     authorizeExchangeSpec.pathMatchers("/api/**").hasAnyRole("USER", "ADMIN_USER");
