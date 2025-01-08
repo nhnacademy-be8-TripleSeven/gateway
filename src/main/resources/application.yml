@@ -23,7 +23,7 @@ spring:
         - id: book-coupon-api
           uri: lb://book-coupon-api
           predicates:
-            - Path=/books/**, /api/books/**, /admin/books/**
+            - Path=/books/**, /api/books/**, /admin/books/**, /api/reviews/**, /admin/tags/**
         - id: order-api
           uri: lb://order-api
           predicates:
