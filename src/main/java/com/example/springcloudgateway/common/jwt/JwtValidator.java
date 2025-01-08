@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpCookie;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ServerWebExchange;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -68,11 +70,19 @@ public class JwtValidator {
     }
 
     // Request Cookie 에서 토큰 정보 추출
-    public String resolveToken(ServerHttpRequest request) {
-        HttpCookie jwtToken = request.getCookies().getFirst("jwt_token");
-        if (jwtToken != null && StringUtils.hasText(jwtToken.getValue())) {
-            return jwtToken.getValue();
+    public String resolveToken(ServerWebExchange exchange) {
+
+        ResponseCookie token = exchange.getResponse().getCookies().getFirst("jwt_token");
+        if (token != null) {
+            return token.getValue();
         }
+        else {
+            HttpCookie jwtToken = exchange.getRequest().getCookies().getFirst("jwt_token");
+            if (jwtToken != null && StringUtils.hasText(jwtToken.getValue())) {
+                return jwtToken.getValue();
+            }
+        }
+
         return null;
     }
 
@@ -89,6 +99,8 @@ public class JwtValidator {
             throw new TokenValidationException("UNSUPPORTED_TOKEN");
         } catch (IllegalArgumentException e) {
             throw new TokenValidationException("INVALID_TOKEN");
+        } catch (TokenValidationException e) {
+            throw e;
         }
     }
 

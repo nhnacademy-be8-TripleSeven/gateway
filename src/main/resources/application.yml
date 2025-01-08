@@ -58,7 +58,6 @@ jwt:
   secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
   refresh-expiration-time: 259200000 # 3days
   access-expiration-time: 3600000 # 1hour
-
 management:
   endpoints:
     web:

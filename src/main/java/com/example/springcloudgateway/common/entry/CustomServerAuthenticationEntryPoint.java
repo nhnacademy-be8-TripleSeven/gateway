@@ -37,7 +37,7 @@ public class CustomServerAuthenticationEntryPoint implements ServerAuthenticatio
         try {
             byte[] errorByte = new ObjectMapper()
                     .registerModule(new JavaTimeModule())
-                    .writeValueAsBytes(errorMessage); // 나중에 직렬화, 역직렬화 설정 하기.
+                    .writeValueAsBytes(errorMessage);
             DataBuffer dataBuffer = serverHttpResponse.bufferFactory().wrap(errorByte);
             return serverHttpResponse.writeWith(Mono.just(dataBuffer));
         } catch (JsonProcessingException e) {

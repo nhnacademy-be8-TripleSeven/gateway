@@ -1,5 +1,6 @@
 package com.example.springcloudgateway.common.filter;
 
+import com.example.springcloudgateway.common.error.jwt.TokenValidationException;
 import com.example.springcloudgateway.common.jwt.JwtValidator;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,8 +25,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     public GatewayFilter apply(Config config) {
 
         return (exchange, chain) -> {
-            String token = jwtValidator.resolveToken(exchange.getRequest());
-
+            String token = jwtValidator.resolveToken(exchange);
             if (token != null && jwtValidator.validateToken(token)) {
                 Authentication authentication = jwtValidator.getAuthentication(token);
                 exchange = exchange.mutate()
