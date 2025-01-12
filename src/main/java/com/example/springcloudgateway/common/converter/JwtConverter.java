@@ -50,10 +50,7 @@ public class JwtConverter implements ServerAuthenticationConverter {
                             }
 
                             log.info("Successfully refreshed token and updated authentication");
-                            return Mono.deferContextual(context ->
-                                    Mono.just(authentication)
-                                            .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication))
-                            );
+                            return Mono.justOrEmpty(authentication);
                         })
                         .onErrorResume(ex -> {
                             log.error("Failed to refresh access token: {}", ex.getMessage());
