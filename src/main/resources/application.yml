@@ -23,11 +23,11 @@ spring:
         - id: book-coupon-api
           uri: lb://book-coupon-api
           predicates:
-            - Path=/books/**, /api/books/**, /admin/books/**, /api/reviews/**, /admin/tags/**
+            - Path=/books/**, /api/books/**, /admin/books/**, /api/reviews/**, /admin/tags/**, /admin/book-tags/**, /admin/book-tags
         - id: order-api
           uri: lb://order-api
           predicates:
-            - Path=/orders/**,  /api/orders/**, /admin/orders/**
+            - Path=/orders/**,  /api/orders/**, /admin/orders/**, /api/point-histories/**
 
       default-filters:
         - name: JwtAuthenticationFilter
