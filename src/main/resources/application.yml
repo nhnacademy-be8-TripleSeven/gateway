@@ -11,7 +11,7 @@ spring:
         - id: front-api
           uri: lb://front-api
           predicates:
-            - Path=/frontend/**, /api/frontend/**, /admin/frontend/**
+            - Path=/frontend/**, /api/frontend/**, /admin/frontend/**, /
         - id: member-api
           uri: lb://member-api
           predicates:

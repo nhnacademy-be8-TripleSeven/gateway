@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance()) // session STATELESS
                 .exceptionHandling(exhandler -> exhandler.authenticationEntryPoint(customServerAuthenticationEntryPoint))
                 .authorizeExchange(authorizeExchangeSpec -> {
+                    authorizeExchangeSpec.pathMatchers("/").permitAll();
                     authorizeExchangeSpec.pathMatchers("/members/**").permitAll();
                     authorizeExchangeSpec.pathMatchers("/cart/**").permitAll();
                     authorizeExchangeSpec.pathMatchers("/orders/**").permitAll();
@@ -47,6 +48,7 @@ public class SecurityConfig {
                     authorizeExchangeSpec.pathMatchers("/frontend/**").permitAll();
                     authorizeExchangeSpec.pathMatchers("/api/**").hasAnyRole("USER", "ADMIN_USER");
                     authorizeExchangeSpec.pathMatchers("/admin/**").hasRole("ADMIN_USER");
+                    authorizeExchangeSpec.pathMatchers("/storage/**").permitAll();
                 })
                 .addFilterAt(authenticationWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
