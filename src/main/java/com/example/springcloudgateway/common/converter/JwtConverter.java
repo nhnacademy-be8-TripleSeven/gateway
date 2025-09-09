@@ -44,13 +44,11 @@ public class JwtConverter implements ServerAuthenticationConverter {
                 return jwtProvider.refreshAccessToken(refreshToken, exchange)
                         .flatMap(tokenInfo -> {
                             Authentication authentication = jwtValidator.getAuthentication(tokenInfo.getAccessToken());
-                            if (authentication == null) {
-                                log.warn("Failed to create authentication after token refresh");
-                                return Mono.empty();
-                            }
+                            if (authentication == null) return Mono.empty();
 
-                            log.info("Successfully refreshed token and updated authentication");
-                            return Mono.justOrEmpty(authentication);
+                            exchange.getResponse().getHeaders().add("X-New-Token", tokenInfo.getAccessToken());
+
+                            return Mono.just(authentication);
                         })
                         .onErrorResume(ex -> {
                             log.error("Failed to refresh access token: {}", ex.getMessage());
